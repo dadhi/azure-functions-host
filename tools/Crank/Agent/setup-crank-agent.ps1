@@ -83,7 +83,9 @@ function InstallCrankAgentTool($LocalPackageSource) {
 function CloneCrankRepo {
     Write-Verbose "Cloning crank repo..."
     $githubPath = Join-Path -Path '~' -ChildPath 'github'
+    if (-not (Test-Path -PathType Container -Path $githubPath)) {
     New-Item -ItemType Directory -Path $githubPath | Out-Null
+    }
     Push-Location -Path $githubPath
     try {
         git clone https://github.com/dotnet/crank.git | Out-Null
