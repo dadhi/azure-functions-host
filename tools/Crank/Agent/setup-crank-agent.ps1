@@ -139,17 +139,19 @@ function ScheduleCrankAgentStartLinux($RunScriptPath) {
 }
 
 function ScheduleCrankAgentStart {
-    Write-Verbose 'Scheduling crank-agent start...'
+    if (-not $Docker) {
+        Write-Verbose 'Scheduling crank-agent start...'
 
-    $scriptPath = Join-Path -Path (Split-Path $PSCommandPath -Parent) -ChildPath 'run-crank-agent.ps1'
+        $scriptPath = Join-Path -Path (Split-Path $PSCommandPath -Parent) -ChildPath 'run-crank-agent.ps1'
 
-    if ($IsWindows) {
-        ScheduleCrankAgentStartWindows -RunScriptPath $scriptPath -Credential (Get-Credential)
-    } else {
-        ScheduleCrankAgentStartLinux -RunScriptPath $scriptPath
+        if ($IsWindows) {
+            ScheduleCrankAgentStartWindows -RunScriptPath $scriptPath -Credential (Get-Credential)
+        } else {
+            ScheduleCrankAgentStartLinux -RunScriptPath $scriptPath
+        }
+
+        Write-Warning 'Please reboot to start crank-agent'
     }
-
-    Write-Warning 'Please reboot to start crank-agent'
 }
 
 function InstallDocker {
