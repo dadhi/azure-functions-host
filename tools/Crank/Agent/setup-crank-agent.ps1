@@ -84,7 +84,7 @@ function CloneCrankRepo {
     Write-Verbose "Cloning crank repo..."
     $githubPath = Join-Path -Path '~' -ChildPath 'github'
     if (-not (Test-Path -PathType Container -Path $githubPath)) {
-    New-Item -ItemType Directory -Path $githubPath | Out-Null
+        New-Item -ItemType Directory -Path $githubPath | Out-Null
     }
     Push-Location -Path $githubPath
     try {
@@ -107,6 +107,11 @@ function InstallCrankAgent {
         try {
             # Build the docker-agent image
             ./build.sh
+
+            # Build the functions-docker-agent image
+            Set-Location $PSScriptRoot/../Docker
+            ./build.sh
+            ./run.sh
         } finally {
             Pop-Location
         }
