@@ -100,11 +100,21 @@ function CloneCrankRepo {
 function InstallCrankAgent {
     $crankRepoPath = CloneCrankRepo
 
-    if ($CrankBranch) {
-        $packagesDirectory = BuildCrankAgent -CrankRepoPath $crankRepoPath
-        InstallCrankAgentTool -LocalPackageSource $packagesDirectory
+    if ($Docker) {
+        Push-Location $crankRepoPath/docker/agent
+        try {
+            # Build the docker-agent image
+            ./build.sh
+        } finally {
+            Pop-Location
+        }
     } else {
-        InstallCrankAgentTool
+        if ($CrankBranch) {
+            $packagesDirectory = BuildCrankAgent -CrankRepoPath $crankRepoPath
+            InstallCrankAgentTool -LocalPackageSource $packagesDirectory
+        } else {
+            InstallCrankAgentTool
+        }
     }
 }
 
