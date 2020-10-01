@@ -37,7 +37,7 @@
             $packageVersion = $packageInfo.Split()[1]
 
             Write-host "Adding $packageName $packageVersion to project" -ForegroundColor Green
-            & { dotnet add package $packageName -v $packageVersion -s $source --no-restore }
+            & { dotnet add package $packageName -v $packageVersion -s $source }
         }
     }
     finally
