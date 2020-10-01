@@ -78,15 +78,18 @@ jobs:
         **\WebJobs.Script.Grpc.csproj
   
   - pwsh: |
-      $sourcePath  = (ls $(Build.Repository.LocalPath)/packages/Microsoft.Azure.WebJobs.Script.WebHost*.nupkg).FullName
-      if (-not (test-path $sourcePath))
-      {
-        throw 'Unable to find Microsoft.Azure.WebJobs.Script.WebHost*.nupkg at ./package'
-      }
-      Copy-Item -Path $sourcePath -Destination $(Build.ArtifactStagingDirectory) -ErrorAction Stop -Verbose -Force
+      foreach ($baseName in @("WebJobs.Script", "WebJobs.Script.WebHost", "WebJobs.Script.Grpc"))
+      {    
+        $packageName = "Microsoft.Azure." + $baseName + "*.nupkg"    
+        $sourcePath = "$(Build.Repository.LocalPath)/packages/$packageName"        
+        if (-not (test-path $sourcePath))    
+        {        
+          throw "Unable to find '$packageName' at './package'"    
+        }   
+        Copy-Item -Path $sourcePath -Destination $(Build.ArtifactStagingDirectory) -ErrorAction Stop -Verbose -Force}
     condition: eq(variables['RUNBUILDFORINTEGRATIONTESTS'], 'True')
     displayName: 'Copy package to ArtifactStagingDirectory'
-    
+
   - task: NuGetCommand@2
     condition: eq(variables['RUNBUILDFORINTEGRATIONTESTS'], 'True')
     inputs:
