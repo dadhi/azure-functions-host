@@ -25,4 +25,6 @@ sudo groupadd docker
 sudo usermod -aG docker Functions
 newgrp docker
 
+sudo setfacl --modify user:Functions:rw /var/run/docker.sock
+
 sudo systemctl enable docker
