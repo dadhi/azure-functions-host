@@ -32,18 +32,18 @@ function New-TemporaryDirectory {
     New-Item -ItemType Directory -Path (Join-Path $parent $name)
 }
 
-function BuildCrankAgent($BranchOrCommit) {
-    Write-Verbose "Cloning crank repo..."
-    git clone https://github.com/dotnet/crank.git > $null
-    Set-Location crank
-    git checkout $BranchOrCommit > $null
+function BuildCrankAgent($CrankRepoPath) {
+    Push-Location $CrankRepoPath
+    try {
+        $logFileName = 'build.log'
+        Write-Verbose "Building crank (see $(Join-Path -Path $PWD -ChildPath $logFileName))..."
+        $buildCommand = $IsWindows ? '.\build.cmd' : './build.sh'
+        & $buildCommand -configuration Release -pack > $logFileName
 
-    $logFileName = 'build.log'
-    Write-Verbose "Building crank (see $(Join-Path -Path $PWD -ChildPath $logFileName))..."
-    $buildCommand = $IsWindows ? '.\build.cmd' : './build.sh'
-    & $buildCommand -configuration Release -pack > $logFileName
-
-    Join-Path -Path $PWD -ChildPath "artifacts/packages/Release/Shipping"
+        Join-Path -Path $PWD -ChildPath "artifacts/packages/Release/Shipping"
+    } finally {
+        Pop-Location
+    }
 }
 
 function GetDotNetToolsLocationArgs {
@@ -80,19 +80,29 @@ function InstallCrankAgentTool($LocalPackageSource) {
     & dotnet $installArgs
 }
 
-function InstallCrankAgent {
-    if ($CrankBranch) {
-        $tempDir = New-TemporaryDirectory
-        Write-Verbose "Creating temporary directory: $($tempDir.FullName)"
-        Push-Location -Path $tempDir.FullName
-        try {
-            $packagesDirectory = BuildCrankAgent -BranchOrCommit $CrankBranch
-            InstallCrankAgentTool -LocalPackageSource $packagesDirectory
-        } finally {
-            Pop-Location
-            Write-Verbose "NOT removing temporary directory: $($tempDir.FullName)"
-            # Remove-Item $tempDir.FullName -Recurse -Force -ErrorAction Ignore
+function CloneCrankRepo {
+    Write-Verbose "Cloning crank repo..."
+    $githubPath = Join-Path -Path '~' -ChildPath 'github'
+    New-Item -ItemType Directory -Path $githubPath | Out-Null
+    Push-Location -Path $githubPath
+    try {
+        git clone https://github.com/dotnet/crank.git | Out-Null
+        Set-Location crank
+        if ($CrankBranch) {
+            git checkout $CrankBranch | Out-Null
         }
+        $PWD.Path
+    } finally {
+        Pop-Location
+    }
+}
+
+function InstallCrankAgent {
+    $crankRepoPath = CloneCrankRepo
+
+    if ($CrankBranch) {
+        $packagesDirectory = BuildCrankAgent -CrankRepoPath $crankRepoPath
+        InstallCrankAgentTool -LocalPackageSource $packagesDirectory
     } else {
         InstallCrankAgentTool
     }
