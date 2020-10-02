@@ -74,12 +74,16 @@ function InstallCrankAgentTool($LocalPackageSource) {
     & dotnet $installArgs
 }
 
+function EnsureDirectoryExists($Path) {
+    if (-not (Test-Path -PathType Container -Path $Path)) {
+        New-Item -ItemType Directory -Path $Path | Out-Null
+    }
+}
+
 function CloneCrankRepo {
     Write-Verbose "Cloning crank repo..."
     $githubPath = Join-Path -Path '~' -ChildPath 'github'
-    if (-not (Test-Path -PathType Container -Path $githubPath)) {
-        New-Item -ItemType Directory -Path $githubPath | Out-Null
-    }
+    EnsureDirectoryExists $githubPath
     Push-Location -Path $githubPath
     try {
         git clone https://github.com/dotnet/crank.git | Out-Null
@@ -163,12 +167,9 @@ function ScheduleCrankAgentStart {
         Write-Verbose 'Starting crank-agent...'
 
         $functionAppsPath = Join-Path -Path '~' -ChildPath 'FunctionApps'
-        $helloAppPath = Join-Path -Path $functionAppsPath -ChildPath $functionAppsPath
-        foreach ($p in $functionAppsPath, $helloAppPath) {
-            if (Test-Path -Path $p -PathType Container) {
-                New-Item -ItemType Directory -Path $p | Out-Null
-            }
-        }
+        EnsureDirectoryExists -Path $functionAppsPath
+        $helloAppPath = Join-Path -Path $functionAppsPath -ChildPath 'HelloApp'
+        EnsureDirectoryExists -Path $helloAppPath
         
         & "$PSScriptRoot/Linux/Docker/run.sh"
     } else {
