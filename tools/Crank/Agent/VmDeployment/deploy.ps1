@@ -24,7 +24,10 @@ param (
     $OsDiskType = 'Premium_LRS',
 
     [string]
-    $Location = 'West Central US'
+    $Location = 'West Central US',
+
+    [string]
+    $UserName = 'Functions'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -56,7 +59,7 @@ New-AzResourceGroupDeployment `
         dnsLabelPrefix = $vmName
         vmSize = $VmSize
         osDiskType = $OsDiskType
-        adminUsername = 'Functions'
+        adminUsername = $UserName
         authenticationType = 'sshPublicKey'
         vaultName = 'functions-crank-kv'
         vaultResourceGroupName = 'FunctionsCrank'
@@ -72,4 +75,4 @@ Start-Sleep -Seconds 30
 Write-Output "The crank VM is ready: $vmName"
 
 # TODO: remove this warning when app deployment is automated
-Write-Warning 'Remember to deploy the Function apps to /home/Functions/FunctionApps'
+Write-Warning "Remember to deploy the Function apps to /home/$UserName/FunctionApps"
