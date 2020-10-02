@@ -26,12 +26,6 @@ function InstallDotNet {
     }
 }
 
-function New-TemporaryDirectory {
-    $parent = [System.IO.Path]::GetTempPath()
-    $name = [System.Guid]::NewGuid()
-    New-Item -ItemType Directory -Path (Join-Path $parent $name)
-}
-
 function BuildCrankAgent($CrankRepoPath) {
     Push-Location $CrankRepoPath
     try {
