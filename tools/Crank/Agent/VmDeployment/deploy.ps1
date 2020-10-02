@@ -68,3 +68,8 @@ New-AzResourceGroupDeployment `
 Write-Verbose 'Restarting the VM...'
 Restart-AzVM -ResourceGroupName $resourceGroupName -Name $vmName | Out-Null
 Start-Sleep -Seconds 30
+
+Write-Output "The crank VM is ready: $vmName"
+
+# TODO: remove this warning when app deployment is automated
+Write-Warning 'Remember to deploy the Function apps to /home/Functions/FunctionApps'
