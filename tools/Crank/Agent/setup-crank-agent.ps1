@@ -111,7 +111,6 @@ function InstallCrankAgent {
             # Build the functions-docker-agent image
             Set-Location $PSScriptRoot/Linux/Docker
             ./build.sh
-            ./run.sh
         } finally {
             Pop-Location
         }
@@ -166,7 +165,19 @@ function ScheduleCrankAgentStartLinux($RunScriptPath) {
 }
 
 function ScheduleCrankAgentStart {
-    if (-not $Docker) {
+    if ($Docker) {
+        Write-Verbose 'Starting crank-agent...'
+
+        $functionAppsPath = Join-Path -Path '~' -ChildPath 'FunctionApps'
+        $helloAppPath = Join-Path -Path $functionAppsPath -ChildPath $functionAppsPath
+        foreach ($p in $functionAppsPath, $helloAppPath) {
+            if (Test-Path -Path $p -PathType Container) {
+                New-Item -ItemType Directory -Path $p | Out-Null
+            }
+        }
+        
+        & "$PSScriptRoot/Linux/Docker/run.sh"
+    } else {
         Write-Verbose 'Scheduling crank-agent start...'
 
         $scriptPath = Join-Path -Path (Split-Path $PSCommandPath -Parent) -ChildPath 'run-crank-agent.ps1'
