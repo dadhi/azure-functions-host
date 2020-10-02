@@ -109,7 +109,7 @@ function InstallCrankAgent {
             ./build.sh
 
             # Build the functions-docker-agent image
-            Set-Location $PSScriptRoot/../Linux/Docker
+            Set-Location $PSScriptRoot/Linux/Docker
             ./build.sh
             ./run.sh
         } finally {
