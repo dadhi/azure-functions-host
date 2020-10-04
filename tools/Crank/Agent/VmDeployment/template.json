@@ -266,7 +266,7 @@
                                 "publicIpAllocationMethod": "Dynamic",
                                 "publicIPAddressVersion": "IPv4",
                                 "dnsSettings": {
-                                    "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+                                    "domainNameLabel": "[concat(parameters('dnsLabelPrefix'), copyIndex())]"
                                 },
                                 "idleTimeoutInMinutes": 4
                             },
