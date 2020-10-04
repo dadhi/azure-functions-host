@@ -312,10 +312,10 @@
                         {
                             "type": "Microsoft.Compute/virtualMachines",
                             "apiVersion": "2019-07-01",
-                            "name": "[parameters('vmName')]",
+                            "name": "[concat(parameters('vmName'), copyIndex())]",
                             "location": "[parameters('location')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('networkInterfaceName'), '0'))]"
+                                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('networkInterfaceName'), copyIndex()))]"
                             ],
                             "properties": {
                                 "hardwareProfile": {
@@ -339,25 +339,29 @@
                                 "networkProfile": {
                                     "networkInterfaces": [
                                         {
-                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaceName'), '0'))]"
+                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaceName'), copyIndex()))]"
                                         }
                                     ]
                                 },
                                 "osProfile": {
-                                    "computerName": "[parameters('vmName')]",
+                                    "computerName": "[concat(parameters('vmName'), copyIndex())]",
                                     "adminUsername": "[parameters('adminUsername')]",
                                     "adminPassword": "[parameters('adminPasswordOrKey')]",
                                     "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
                                 }
+                            },
+                            "copy": {
+                                "name": "virtualMachines",
+                                "count": 2
                             }
                         },
                         {
                             "apiVersion": "2019-12-01",
                             "dependsOn": [
-                                "[parameters('vmName')]"
+                                "[concat(parameters('vmName'), '0')]"
                             ],
                             "location": "[parameters('location')]",
-                            "name": "[concat(parameters('vmName'), '/custom-script')]",
+                            "name": "[concat(parameters('vmName'), '0', '/custom-script')]",
                             "properties": {
                                 "autoUpgradeMinorVersion": true,
                                 "protectedSettings": {
