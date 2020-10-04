@@ -195,36 +195,6 @@
                     },
                     "resources": [
                         {
-                            "type": "Microsoft.Network/networkInterfaces",
-                            "apiVersion": "2020-05-01",
-                            "name": "[variables('networkInterfaceName')]",
-                            "location": "[parameters('location')]",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-                                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                                "[resourceId('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
-                            ],
-                            "properties": {
-                                "ipConfigurations": [
-                                    {
-                                        "name": "ipconfig1",
-                                        "properties": {
-                                            "subnet": {
-                                                "id": "[variables('subnetRef')]"
-                                            },
-                                            "privateIPAllocationMethod": "Dynamic",
-                                            "publicIpAddress": {
-                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-                                            }
-                                        }
-                                    }
-                                ],
-                                "networkSecurityGroup": {
-                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('networkSecurityGroupName'))]"
-                                }
-                            }
-                        },
-                        {
                             "type": "Microsoft.Network/networkSecurityGroups",
                             "apiVersion": "2020-05-01",
                             "name": "[parameters('networkSecurityGroupName')]",
@@ -299,6 +269,36 @@
                                     "domainNameLabel": "[parameters('dnsLabelPrefix')]"
                                 },
                                 "idleTimeoutInMinutes": 4
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "apiVersion": "2020-05-01",
+                            "name": "[variables('networkInterfaceName')]",
+                            "location": "[parameters('location')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
+                                "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
+                                "[resourceId('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
+                            ],
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "subnet": {
+                                                "id": "[variables('subnetRef')]"
+                                            },
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "publicIpAddress": {
+                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('networkSecurityGroupName'))]"
+                                }
                             }
                         },
                         {
