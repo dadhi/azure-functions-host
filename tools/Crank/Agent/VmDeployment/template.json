@@ -387,13 +387,21 @@
                             "type": "string",
                             "value": "[parameters('adminUsername')]"
                         },
-                        "hostname": {
+                        "hostname0": {
                             "type": "string",
                             "value": "[reference(concat(variables('publicIpAddressName'), '0')).dnsSettings.fqdn]"
                         },
-                        "sshCommand": {
+                        "hostname1": {
+                            "type": "string",
+                            "value": "[reference(concat(variables('publicIpAddressName'), '1')).dnsSettings.fqdn]"
+                        },
+                        "sshCommand0": {
                             "type": "string",
                             "value": "[concat('ssh ', parameters('adminUsername'), '@', reference(concat(variables('publicIpAddressName'), '0')).dnsSettings.fqdn)]"
+                        },
+                        "sshCommand1": {
+                            "type": "string",
+                            "value": "[concat('ssh ', parameters('adminUsername'), '@', reference(concat(variables('publicIpAddressName'), '1')).dnsSettings.fqdn)]"
                         }
                     }
                 },
@@ -436,13 +444,21 @@
             "type": "string",
             "value": "[reference('crankVmDeployment').outputs.adminUsername.value]"
         },
-        "hostname": {
+        "hostname0": {
             "type": "string",
-            "value": "[reference('crankVmDeployment').outputs.hostname.value]"
+            "value": "[reference('crankVmDeployment').outputs.hostname0.value]"
         },
-        "sshCommand": {
+        "hostname1": {
             "type": "string",
-            "value": "[reference('crankVmDeployment').outputs.sshCommand.value]"
+            "value": "[reference('crankVmDeployment').outputs.hostname1.value]"
+        },
+        "sshCommand0": {
+            "type": "string",
+            "value": "[reference('crankVmDeployment').outputs.sshCommand0.value]"
+        },
+        "sshCommand1": {
+            "type": "string",
+            "value": "[reference('crankVmDeployment').outputs.sshCommand1.value]"
         }
     }
 }
