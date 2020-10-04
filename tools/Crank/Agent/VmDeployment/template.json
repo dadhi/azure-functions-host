@@ -358,10 +358,10 @@
                         {
                             "apiVersion": "2019-12-01",
                             "dependsOn": [
-                                "[concat(parameters('vmName'), '0')]"
+                                "[concat(parameters('vmName'), copyIndex())]"
                             ],
                             "location": "[parameters('location')]",
-                            "name": "[concat(parameters('vmName'), '0', '/custom-script')]",
+                            "name": "[concat(parameters('vmName'), copyIndex(), '/custom-script')]",
                             "properties": {
                                 "autoUpgradeMinorVersion": true,
                                 "protectedSettings": {
@@ -375,7 +375,11 @@
                                 "typeHandlerVersion": "2.1"
                             },
                             "tags": {},
-                            "type": "Microsoft.Compute/virtualMachines/extensions"
+                            "type": "Microsoft.Compute/virtualMachines/extensions",
+                            "copy": {
+                                "name": "virtualMachines",
+                                "count": 2
+                            }
                         }
                     ],
                     "outputs": {
