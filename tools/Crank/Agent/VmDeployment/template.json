@@ -256,7 +256,7 @@
                         {
                             "type": "Microsoft.Network/publicIpAddresses",
                             "apiVersion": "2020-05-01",
-                            "name": "[variables('publicIpAddressName')]",
+                            "name": "[concat(variables('publicIpAddressName'), copyIndex())]",
                             "location": "[parameters('location')]",
                             "sku": {
                                 "name": "Basic",
@@ -269,6 +269,10 @@
                                     "domainNameLabel": "[parameters('dnsLabelPrefix')]"
                                 },
                                 "idleTimeoutInMinutes": 4
+                            },
+                            "copy": {
+                                "name": "publicIpAddresses",
+                                "count": 2
                             }
                         },
                         {
@@ -279,7 +283,7 @@
                             "dependsOn": [
                                 "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                                 "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                                "[resourceId('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
+                                "[resourceId('Microsoft.Network/publicIpAddresses/', concat(variables('publicIpAddressName'), '0'))]"
                             ],
                             "properties": {
                                 "ipConfigurations": [
@@ -291,7 +295,7 @@
                                             },
                                             "privateIPAllocationMethod": "Dynamic",
                                             "publicIpAddress": {
-                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIpAddressName'), '0'))]"
                                             }
                                         }
                                     }
@@ -373,11 +377,11 @@
                         },
                         "hostname": {
                             "type": "string",
-                            "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
+                            "value": "[reference(concat(variables('publicIpAddressName'), '0')).dnsSettings.fqdn]"
                         },
                         "sshCommand": {
                             "type": "string",
-                            "value": "[concat('ssh ', parameters('adminUsername'), '@', reference(variables('publicIPAddressName')).dnsSettings.fqdn)]"
+                            "value": "[concat('ssh ', parameters('adminUsername'), '@', reference(concat(variables('publicIpAddressName'), '0')).dnsSettings.fqdn)]"
                         }
                     }
                 },
