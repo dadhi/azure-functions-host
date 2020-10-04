@@ -278,12 +278,12 @@
                         {
                             "type": "Microsoft.Network/networkInterfaces",
                             "apiVersion": "2020-05-01",
-                            "name": "[variables('networkInterfaceName')]",
+                            "name": "[concat(variables('networkInterfaceName'), copyIndex())]",
                             "location": "[parameters('location')]",
                             "dependsOn": [
                                 "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                                 "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                                "[resourceId('Microsoft.Network/publicIpAddresses/', concat(variables('publicIpAddressName'), '0'))]"
+                                "[resourceId('Microsoft.Network/publicIpAddresses/', concat(variables('publicIpAddressName'), copyIndex()))]"
                             ],
                             "properties": {
                                 "ipConfigurations": [
@@ -295,7 +295,7 @@
                                             },
                                             "privateIPAllocationMethod": "Dynamic",
                                             "publicIpAddress": {
-                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIpAddressName'), '0'))]"
+                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIpAddressName'), copyIndex()))]"
                                             }
                                         }
                                     }
@@ -303,6 +303,10 @@
                                 "networkSecurityGroup": {
                                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('networkSecurityGroupName'))]"
                                 }
+                            },
+                            "copy": {
+                                "name": "networkInterfaces",
+                                "count": 2
                             }
                         },
                         {
@@ -311,7 +315,7 @@
                             "name": "[parameters('vmName')]",
                             "location": "[parameters('location')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
+                                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('networkInterfaceName'), '0'))]"
                             ],
                             "properties": {
                                 "hardwareProfile": {
@@ -335,7 +339,7 @@
                                 "networkProfile": {
                                     "networkInterfaces": [
                                         {
-                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaceName'), '0'))]"
                                         }
                                     ]
                                 },
